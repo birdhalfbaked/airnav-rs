@@ -1,2 +1,36 @@
-/// Generated. Do not edit.
-struct Record {}
+use super::fields::*;
+
+struct VHFNavaidPrimaryRecordIntermediate {
+    pub record_type: _5_2_RecordTypeRaw<1>,
+    pub customer_area_code: _5_3_CustomerAreaCodeRaw<2>,
+    pub section_code: _5_4_SectionCodeRaw<5>,
+    pub subsection_code: _5_5_SubsectionCodeRaw<6>,
+    pub airport_icao_identifier: _5_6_AirportHeliportIdentifierRaw<7>,
+    pub airport_icao_code: _5_14_IcaoCodeRaw<11>,
+    pub blank_spacing_1: BlankSpacingRaw<13, 1>,
+    pub vor_identifier: _5_33_VorNdbIdentifierRaw<14>,
+    pub blank_spacing_2: BlankSpacingRaw<18, 2>,
+    pub vor_icao_code: _5_14_IcaoCodeRaw<20>,
+    pub continuation_record_no: _5_16_ContinuationRecordNumberRaw<22>,
+    pub vor_frequency: _5_34_VorNdbFrequencyRaw<23>,
+    pub navaid_class: _5_35_NavaidClassRaw<28>,
+    pub vor_latitude: _5_36_LatitudeRaw<33>,
+    pub vor_longitude: _5_37_LongitudeRaw<42>,
+    pub dme_identifier: _5_38_DMEIdentifierRaw<52>,
+    pub dme_latitude: _5_36_LatitudeRaw<56>,
+    pub dme_longitude: _5_37_LongitudeRaw<65>,
+    pub station_declination: _5_66_StationDeclinationRaw<75>,
+    pub dme_elevation: _5_40_DmeElevationRaw<80>,
+    pub navaid_usable_range: _5_149_NavaidUsableRangeRaw<85>,
+    pub ils_dme_bias: _5_90_IlsDmeBiasRaw<86>,
+    pub frequency_protection: _5_150_FrequencyProtectionDistanceRaw<88>,
+    pub datum_code: _5_198_DatumCodeRaw<91>,
+    pub vor_name: _5_71_FacilityNameFieldRaw<94>,
+    pub vfr_checkpoint_flag: _5_158_VfrCheckpointFlagRaw<119>,
+    pub vor_range_power: _5_338_VhfNavaidVorRangePowerRaw<120>,
+    pub expanded_dme_service_volume: _5_339_VhfNavaidDmeExpandedServiceVolumeRaw<121>,
+    pub route_inappropriate_dme: _5_297_RouteInappropriateNavaidIndicatorRaw<122>,
+    pub dme_operational_service_volume: _5_277_DmeOperationalServiceVolumeRaw<123>,
+    pub file_record_number: _5_31_FileRecordNumberRaw<124>,
+    pub cycle_date: _5_32_CycleDateRaw<129>,
+}
