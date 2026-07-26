@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::ARINCRecord;
 use crate::types::fields::{BLANK, ParseableField};
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct HeliportApproachRecords;
 impl HeliportApproachRecords {
@@ -228,6 +229,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportApproachMSACenterFixPrimaryRecord<'a
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.1(C.2) Airport Approach with TAA
@@ -374,6 +384,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportApproachTAAPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.2(C) Airport Approach Primary Extension Continuation Record
@@ -488,6 +507,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportApproachPrimaryExtensionContinuation
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.3(C) Airport Approach Flight Planning Continuation Record
@@ -573,6 +601,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportApproachFlightPlanningContinuationRe
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -673,5 +710,14 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportApproachProcedureDataContinuationRec
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }

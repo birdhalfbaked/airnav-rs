@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct GLSRecords;
 impl GLSRecords {
@@ -98,6 +99,15 @@ impl<'a> Arinc424RecordSpec<'a> for GLSPrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.gls_ref_path_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.29.2 GLS Continuation Record
@@ -144,5 +154,14 @@ impl<'a> Arinc424RecordSpec<'a> for GLSContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.gls_ref_path_identifier.raw_bytes,
+        ])
     }
 }

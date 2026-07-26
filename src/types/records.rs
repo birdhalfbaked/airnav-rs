@@ -200,13 +200,36 @@ impl<'a, T: ParseableField> RecordField<'a, T> {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct GroupKey {
+    pub key: Box<[u8]>,
+}
+
+impl GroupKey {
+    pub fn from_byte_slices(bytes: &[&[u8]]) -> Self {
+        let len: usize = bytes.iter().map(|p| p.len()).sum();
+        let mut buf = Vec::with_capacity(len);
+        for p in bytes {
+            buf.extend_from_slice(p);
+        }
+        Self { key: buf.into() }
+    }
+}
+
 pub trait Arinc424RecordSpec<'a>: Sized + 'a {
     fn record_name() -> &'static str;
     fn parse(input: &'a [u8]) -> Result<Self, RecordParseError>;
     fn validate(&self) -> Result<(), RecordValidationError>;
+    fn group_key(&self) -> GroupKey;
 }
 
 // Layout dispatch helpers
 pub fn is_primary_record(input: &[u8], continuation_column: usize) -> bool {
     matches!(input[continuation_column - 1], b'0' | b'1' | BLANK)
+}
+
+pub trait Arinc424Record<'a>: Sized + 'a {
+    fn parse(input: &'a [u8]) -> Result<Self, RecordParseError>;
+    fn validate(&self) -> Result<(), RecordValidationError>;
+    fn group_key(&self) -> GroupKey;
 }

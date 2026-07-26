@@ -109,6 +109,12 @@ impl ParseableField for IntNumeric {
     }
 }
 
+impl Into<i64> for IntNumeric {
+    fn into(self: IntNumeric) -> i64 {
+        self.0
+    }
+}
+
 #[test]
 pub fn test_int_numeric() {
     let r = IntNumeric::from_bytes(b"001");
@@ -441,6 +447,12 @@ impl ParseableField for LatitudeNumeric {
     }
 }
 
+impl Into<f64> for LatitudeNumeric {
+    fn into(self: LatitudeNumeric) -> f64 {
+        self.0
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct LongitudeNumeric(pub f64);
 impl ParseableField for LongitudeNumeric {
@@ -669,5 +681,11 @@ impl<const LEN: usize, const EXACT: bool> ParseableField for LengthLimitedIdenti
 impl<const LEN: usize, const EXACT: bool> AsRef<str> for LengthLimitedIdentifier<LEN, EXACT> {
     fn as_ref(&self) -> &str {
         self.0.as_ref()
+    }
+}
+
+impl<const LEN: usize, const EXACT: bool> Into<Box<str>> for LengthLimitedIdentifier<LEN, EXACT> {
+    fn into(self: LengthLimitedIdentifier<LEN, EXACT>) -> Box<str> {
+        self.0
     }
 }

@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct RestrictiveAirspaceRecords;
 impl RestrictiveAirspaceRecords {
@@ -114,6 +115,15 @@ impl<'a> Arinc424RecordSpec<'a> for RestrictiveAirspacePrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.restrictive_airspace_designation.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.18.2 Restrictive Airspace Time/Controlling Agency Continuation Record
@@ -182,6 +192,15 @@ impl<'a> Arinc424RecordSpec<'a> for RestrictiveAirspaceTimeControllingAgencyCont
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.restrictive_airspace_designation.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.18.2 Restrictive Airspace Controlling Agency Continuation Record
@@ -229,6 +248,15 @@ impl<'a> Arinc424RecordSpec<'a> for RestrictiveAirspaceControllingAgencyContinua
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.restrictive_airspace_designation.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
     }
 }
 
@@ -280,5 +308,14 @@ impl<'a> Arinc424RecordSpec<'a> for RestrictiveAirspaceFlightPlanningContinuatio
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.restrictive_airspace_designation.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
     }
 }

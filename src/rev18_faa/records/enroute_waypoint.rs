@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct EnrouteWaypointRecords;
 impl EnrouteWaypointRecords {
@@ -102,6 +103,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteWaypointPrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+    
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.region_code.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.4.2(A) Enroute Waypoint Continuation Record
@@ -148,6 +158,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteWaypointContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.region_code.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -201,6 +220,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteWaypointFlightPlanningContinuationRec
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.region_code.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
     }
 }
 

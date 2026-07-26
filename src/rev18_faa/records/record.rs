@@ -7,7 +7,9 @@
 use crate::rev18_faa::records::*;
 
 use crate::types::fields::BLANK;
-use crate::types::records::{Arinc424RecordSpec, RecordParseError, RecordValidationError};
+use crate::types::records::{
+    Arinc424Record, Arinc424RecordSpec, GroupKey, RecordParseError, RecordValidationError,
+};
 
 /// ARINC 424 Record Sum Type for all possible record types.
 #[derive(Debug)]
@@ -239,8 +241,8 @@ pub enum ARINCRecord<'a> {
     HeliportTAAContinuation(HeliportTAAContinuationRecord<'a>),
 }
 
-impl<'a> ARINCRecord<'a> {
-    pub fn parse(input: &'a [u8]) -> Result<Self, RecordParseError> {
+impl<'a> Arinc424Record<'a> for ARINCRecord<'a> {
+    fn parse(input: &'a [u8]) -> Result<Self, RecordParseError> {
         let section_bytes = match input[4] {
             b'H' | b'P' => {
                 if input[12] == b' ' {
@@ -300,7 +302,7 @@ impl<'a> ARINCRecord<'a> {
             )),
         }
     }
-    pub fn validate(&self) -> Result<(), RecordValidationError> {
+    fn validate(&self) -> Result<(), RecordValidationError> {
         match self {
             Self::VHFNavaidPrimary(record) => record.validate(),
             Self::VHFNavaidContinuation(record) => record.validate(),
@@ -445,6 +447,156 @@ impl<'a> ARINCRecord<'a> {
             Self::HeliportCommsTimeContinuation(record) => record.validate(),
             Self::HeliportTAAPrimary(record) => record.validate(),
             Self::HeliportTAAContinuation(record) => record.validate(),
+        }
+    }
+
+    fn group_key(&self) -> GroupKey {
+        match self {
+            Self::VHFNavaidPrimary(record) => record.group_key(),
+            Self::VHFNavaidContinuation(record) => record.group_key(),
+            Self::VHFNavaidSimulationContinuation(record) => record.group_key(),
+            Self::VHFNavaidFlightPlanningContinuation(record) => record.group_key(),
+            Self::VHFNavaidChangedDataContinuation(record) => record.group_key(),
+            Self::VHFNavaidLimitationContinuation(record) => record.group_key(),
+            Self::NDBNavaidPrimary(record) => record.group_key(),
+            Self::NDBNavaidContinuation(record) => record.group_key(),
+            Self::NDBNavaidSimulationContinuation(record) => record.group_key(),
+            Self::NDBNavaidFlightPlanningContinuation(record) => record.group_key(),
+            Self::NDBNavaidChangedDataContinuation(record) => record.group_key(),
+            Self::TerminalNDBNavaidPrimary(record) => record.group_key(),
+            Self::TerminalNDBNavaidContinuation(record) => record.group_key(),
+            Self::TerminalNDBNavaidSimulationContinuation(record) => record.group_key(),
+            Self::TerminalNDBNavaidFlightPlanningContinuation(record) => record.group_key(),
+            Self::TerminalNDBNavaidChangedDataContinuation(record) => record.group_key(),
+            Self::EnrouteWaypointPrimary(record) => record.group_key(),
+            Self::EnrouteWaypointContinuation(record) => record.group_key(),
+            Self::EnrouteWaypointFlightPlanningContinuation(record) => record.group_key(),
+            Self::EnrouteWaypointChangedDataContinuation(record) => record.group_key(),
+            Self::TerminalWaypointPrimary(record) => record.group_key(),
+            Self::TerminalWaypointContinuation(record) => record.group_key(),
+            Self::TerminalWaypointFlightPlanningContinuation(record) => record.group_key(),
+            Self::TerminalWaypointChangedDataContinuation(record) => record.group_key(),
+            Self::HoldingPatternPrimary(record) => record.group_key(),
+            Self::HoldingPatternContinuation(record) => record.group_key(),
+            Self::EnrouteAirwayPrimary(record) => record.group_key(),
+            Self::EnrouteAirwayContinuation(record) => record.group_key(),
+            Self::EnrouteAirwayFlightPlanningContinuation(record) => record.group_key(),
+            Self::EnrouteAirwayChangedDataContinuation(record) => record.group_key(),
+            Self::AirportPrimary(record) => record.group_key(),
+            Self::AirportContinuation(record) => record.group_key(),
+            Self::AirportFlightPlanningContinuation(record) => record.group_key(),
+            Self::AirportChangedDataContinuation(record) => record.group_key(),
+            Self::AirportGatePrimary(record) => record.group_key(),
+            Self::AirportGateContinuation(record) => record.group_key(),
+            Self::AirportSIDPrimary(record) => record.group_key(),
+            Self::AirportSIDFlightPlanningContinuation(record) => record.group_key(),
+            Self::AirportSIDChangedDataContinuation(record) => record.group_key(),
+            Self::AirportSTARPrimary(record) => record.group_key(),
+            Self::AirportSTARFlightPlanningContinuation(record) => record.group_key(),
+            Self::AirportSTARChangedDataContinuation(record) => record.group_key(),
+            Self::AirportApproachMSACenterFixPrimary(record) => record.group_key(),
+            Self::AirportApproachTAAPrimary(record) => record.group_key(),
+            Self::AirportApproachPrimaryExtensionContinuation(record) => record.group_key(),
+            Self::AirportApproachFlightPlanningContinuation(record) => record.group_key(),
+            Self::AirportApproachMSACenterFixChangedDataContinuation(record) => record.group_key(),
+            Self::AirportApproachTAAProcedureDataContinuation(record) => record.group_key(),
+            Self::AirportApproachProcedureDataContinuation(record) => record.group_key(),
+            Self::RunwayPrimary(record) => record.group_key(),
+            Self::RunwayContinuation(record) => record.group_key(),
+            Self::RunwaySimulationContinuation(record) => record.group_key(),
+            Self::LocalizerGlideslopePrimary(record) => record.group_key(),
+            Self::LocalizerGlideslopeContinuation(record) => record.group_key(),
+            Self::LocalizerGlideslopeSimulationContinuation(record) => record.group_key(),
+            Self::CompanyRoutePrimary(record) => record.group_key(),
+            Self::LocalizerMarkerPrimary(record) => record.group_key(),
+            Self::LocalizerMarkerContinuation(record) => record.group_key(),
+            Self::AirportCommsPrimary(record) => record.group_key(),
+            Self::AirportCommsSectorNarrativeContinuation(record) => record.group_key(),
+            Self::AirportCommsTimeContinuation(record) => record.group_key(),
+            Self::AirwaysMarkerPrimary(record) => record.group_key(),
+            Self::AirwaysMarkerContinuation(record) => record.group_key(),
+            Self::CruisingTablePrimary(record) => record.group_key(),
+            Self::FIRUIRPrimary(record) => record.group_key(),
+            Self::FIRUIRContinuation(record) => record.group_key(),
+            Self::RestrictiveAirspacePrimary(record) => record.group_key(),
+            Self::RestrictiveAirspaceTimeControllingAgencyContinuation(record) => {
+                record.group_key()
+            }
+            Self::RestrictiveAirspaceFlightPlanningContinuation(record) => record.group_key(),
+            Self::RestrictiveAirspaceControllingAgencyContinuation(record) => record.group_key(),
+            Self::GridMORAPrimary(record) => record.group_key(),
+            Self::AirportMSAPrimary(record) => record.group_key(),
+            Self::AirportMSAContinuation(record) => record.group_key(),
+            Self::EnrouteAirwayRestrictionAltitudeExclusionPrimary(record) => record.group_key(),
+            Self::EnrouteAirwayRestrictionAltitudeExclusionContinuation(record) => {
+                record.group_key()
+            }
+            Self::EnrouteAirwayRestrictionNoteRestrictionPrimary(record) => record.group_key(),
+            Self::EnrouteAirwayRestrictionNoteRestrictionContinuation(record) => record.group_key(),
+            Self::EnrouteAirwayRestrictionSeasonalClosurePrimary(record) => record.group_key(),
+            Self::EnrouteAirwayRestrictionCruisingTableReplacementPrimary(record) => {
+                record.group_key()
+            }
+            Self::EnrouteAirwayRestrictionCruisingTableReplacementContinuation(record) => {
+                record.group_key()
+            }
+            Self::MLSPrimary(record) => record.group_key(),
+            Self::MLSContinuation(record) => record.group_key(),
+            Self::EnrouteCommsPrimary(record) => record.group_key(),
+            Self::EnrouteCommsCallsignAndTimeContinuation(record) => record.group_key(),
+            Self::EnrouteCommsTimeContinuation(record) => record.group_key(),
+            Self::PreferredRoutePrimary(record) => record.group_key(),
+            Self::PreferredRouteContinuation(record) => record.group_key(),
+            Self::PreferredRouteTimeContinuation(record) => record.group_key(),
+            Self::ControlledAirspacePrimary(record) => record.group_key(),
+            Self::ControlledAirspaceControllingAgencyAndTimeContinuation(record) => {
+                record.group_key()
+            }
+            Self::GeographicalReferenceTablePrimary(record) => record.group_key(),
+            Self::GeographicalReferenceTableContinuation(record) => record.group_key(),
+            Self::FlightPlanningSIDSTARPrimary(record) => record.group_key(),
+            Self::FlightPlanningSIDSTARContinuation(record) => record.group_key(),
+            Self::FlightPlanningSIDSTARTimeContinuation(record) => record.group_key(),
+            Self::FlightPlanningApproachPrimary(record) => record.group_key(),
+            Self::FlightPlanningApproachContinuation(record) => record.group_key(),
+            Self::FlightPlanningApproachTimeContinuation(record) => record.group_key(),
+            Self::AirportPathPointPrimary(record) => record.group_key(),
+            Self::AirportPathPointContinuation(record) => record.group_key(),
+            Self::HeliportPathPointPrimary(record) => record.group_key(),
+            Self::HeliportPathPointContinuation(record) => record.group_key(),
+            Self::GLSPrimary(record) => record.group_key(),
+            Self::GLSContinuation(record) => record.group_key(),
+            Self::AlternatePrimary(record) => record.group_key(),
+            Self::AirportTAAPrimary(record) => record.group_key(),
+            Self::AirportTAAContinuation(record) => record.group_key(),
+            Self::HeliportPrimary(record) => record.group_key(),
+            Self::HeliportContinuation(record) => record.group_key(),
+            Self::HeliportControllingAgencyAndTimeContinuation(record) => record.group_key(),
+            Self::HeliportNarrativeTimeContinuation(record) => record.group_key(),
+            Self::HeliportTerminalWaypointPrimary(record) => record.group_key(),
+            Self::HeliportTerminalWaypointContinuation(record) => record.group_key(),
+            Self::HeliportTerminalWaypointFlightPlanningContinuation(record) => record.group_key(),
+            Self::HeliportTerminalWaypointChangedDataContinuation(record) => record.group_key(),
+            Self::HeliportSIDPrimary(record) => record.group_key(),
+            Self::HeliportSIDFlightPlanningContinuation(record) => record.group_key(),
+            Self::HeliportSIDChangedDataContinuation(record) => record.group_key(),
+            Self::HeliportSTARPrimary(record) => record.group_key(),
+            Self::HeliportSTARFlightPlanningContinuation(record) => record.group_key(),
+            Self::HeliportSTARChangedDataContinuation(record) => record.group_key(),
+            Self::HeliportApproachMSACenterFixPrimary(record) => record.group_key(),
+            Self::HeliportApproachTAAPrimary(record) => record.group_key(),
+            Self::HeliportApproachPrimaryExtensionContinuation(record) => record.group_key(),
+            Self::HeliportApproachFlightPlanningContinuation(record) => record.group_key(),
+            Self::HeliportApproachMSACenterFixChangedDataContinuation(record) => record.group_key(),
+            Self::HeliportApproachTAAProcedureDataContinuation(record) => record.group_key(),
+            Self::HeliportApproachProcedureDataContinuation(record) => record.group_key(),
+            Self::HeliportMSAPrimary(record) => record.group_key(),
+            Self::HeliportMSAContinuation(record) => record.group_key(),
+            Self::HeliportCommsPrimary(record) => record.group_key(),
+            Self::HeliportCommsSectorNarrativeContinuation(record) => record.group_key(),
+            Self::HeliportCommsTimeContinuation(record) => record.group_key(),
+            Self::HeliportTAAPrimary(record) => record.group_key(),
+            Self::HeliportTAAContinuation(record) => record.group_key(),
         }
     }
 }

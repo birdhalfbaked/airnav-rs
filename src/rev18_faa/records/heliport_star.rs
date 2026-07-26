@@ -3,7 +3,7 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError, is_primary_record,
 };
 pub(super) struct HeliportSTARRecords;
 impl HeliportSTARRecords {
@@ -188,6 +188,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportSTARPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.star_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.3 Airport STAR Flight Planning Continuation Record
@@ -261,6 +270,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportSTARFlightPlanningContinuationRecord
             );
         }
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.star_identifier.raw_bytes,
+        ])
     }
 }
 

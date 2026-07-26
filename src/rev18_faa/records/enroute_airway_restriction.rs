@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct EnrouteAirwayRestrictionRecords;
 impl EnrouteAirwayRestrictionRecords {
@@ -227,6 +228,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionAltitudeExclusionPri
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.21.2 Enroute Airway Restriction Altitude Exclusion Continuation Record
@@ -314,6 +324,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionAltitudeExclusionCon
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.21.A.1 Enroute Airway Restriction Note Restriction Primary Record
@@ -398,6 +417,16 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionNoteRestrictionPrima
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
+    }
+    
 }
 
 /// 4.1.21.A.2 Enroute Airway Restriction Note Restriction Continuation Record
@@ -440,6 +469,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionNoteRestrictionConti
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -537,6 +575,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionSeasonalClosurePrima
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.21.C.1 Enroute Airway Restriction Cruising Table Replacement Primary Record
@@ -633,6 +680,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionCruisingTableReplace
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.21.C.2 Enroute Airway Restriction Cruising Table Replacement Formatted Time Continuation Record
@@ -689,5 +745,14 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteAirwayRestrictionCruisingTableReplace
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_identifier.raw_bytes,
+            self.restriction_identifier.raw_bytes,
+        ])
     }
 }

@@ -2,7 +2,7 @@ use crate::rev18_faa::definitions::*;
 
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
 };
 pub(super) struct CruisingTableRecords;
 impl CruisingTableRecords {
@@ -75,5 +75,13 @@ impl<'a> Arinc424RecordSpec<'a> for CruisingTablePrimaryRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.cruise_table_identifier.raw_bytes,
+        ])
     }
 }

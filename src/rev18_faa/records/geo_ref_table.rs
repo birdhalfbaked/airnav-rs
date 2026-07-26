@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct GeographicalReferenceTableRecords;
 impl GeographicalReferenceTableRecords {
@@ -98,6 +99,15 @@ impl<'a> Arinc424RecordSpec<'a> for GeographicalReferenceTablePrimaryRecord<'a> 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.geographical_reference_table_identifier.raw_bytes,
+            self.geographical_entity.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.26.2 Geographical Reference Table Continuation Record
@@ -141,5 +151,14 @@ impl<'a> Arinc424RecordSpec<'a> for GeographicalReferenceTableContinuationRecord
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.geographical_reference_table_identifier.raw_bytes,
+            self.geographical_entity.raw_bytes,
+        ])
     }
 }

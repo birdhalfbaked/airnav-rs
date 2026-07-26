@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct FlightPlanningDataRecords;
 impl FlightPlanningDataRecords {
@@ -229,6 +230,15 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningSIDSTARPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.sid_star_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.27.1(B) Flight Planning Approach Data Primary Record
@@ -378,6 +388,15 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningApproachPrimaryRecord<'a> {
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -581,6 +600,15 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningSIDSTARContinuationRecord<'a> 
 
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.sid_star_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.27.2(B) Flight Planning Approach Continuation Record
@@ -783,6 +811,15 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningApproachContinuationRecord<'a>
 
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.27.3(A) Flight Planning SID/STAR Time Continuation Record
@@ -909,6 +946,15 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningSIDSTARTimeContinuationRecord<
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.sid_star_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.27.3(B) Flight Planning Approach Time Continuation Record
@@ -1034,5 +1080,14 @@ impl<'a> Arinc424RecordSpec<'a> for FlightPlanningApproachTimeContinuationRecord
             );
         }
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }

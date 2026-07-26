@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct AirwaysMarkerRecords;
 impl AirwaysMarkerRecords {
@@ -89,6 +90,14 @@ impl<'a> Arinc424RecordSpec<'a> for AirwaysMarkerPrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.marker_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.15.2 Airways Marker Continuation Record
@@ -129,5 +138,13 @@ impl<'a> Arinc424RecordSpec<'a> for AirwaysMarkerContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.marker_identifier.raw_bytes,
+        ])
     }
 }

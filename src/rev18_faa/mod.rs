@@ -445,4 +445,5 @@
 //!
 
 pub mod definitions;
+pub mod entities;
 pub mod records;

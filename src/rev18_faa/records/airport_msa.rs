@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct AirportMSARecords;
 impl AirportMSARecords {
@@ -134,6 +135,17 @@ impl<'a> Arinc424RecordSpec<'a> for AirportMSAPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.msa_center.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
+    }
+
 }
 
 /// 4.1.20.2 Airport MSA Continuation Record
@@ -195,5 +207,15 @@ impl<'a> Arinc424RecordSpec<'a> for AirportMSAContinuationRecord<'a> {
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.msa_center.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
     }
 }

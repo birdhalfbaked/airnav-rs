@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::ARINCRecord;
 use crate::types::fields::{BLANK, ParseableField};
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct AirportApproachRecords;
 impl AirportApproachRecords {
@@ -74,7 +75,7 @@ pub struct AirportApproachMSACenterFixPrimaryRecord<'a> {
     pub section: RecordField<'a, Section>,
     pub airport_identifier: RecordField<'a, AirportHeliportIdentifier>,
     pub airport_icao_code: RecordField<'a, IcaoCode>,
-    pub subsection: RecordField<'a, GenericSubsection>,
+    pub subsection: RecordField<'a, AirportSubsection>,
     pub approach_identifier: RecordField<'a, ApproachRouteIdentifier>,
     pub route_type: RecordField<'a, AirportHeliportApproachRouteType>,
     pub transition_identifier: RecordField<'a, TransitionIdentifier>,
@@ -226,6 +227,15 @@ impl<'a> Arinc424RecordSpec<'a> for AirportApproachMSACenterFixPrimaryRecord<'a>
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.1(C.2) Airport Approach with TAA
@@ -372,6 +382,15 @@ impl<'a> Arinc424RecordSpec<'a> for AirportApproachTAAPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.2(C) Airport Approach Primary Extension Continuation Record
@@ -486,6 +505,15 @@ impl<'a> Arinc424RecordSpec<'a> for AirportApproachPrimaryExtensionContinuationR
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.9.3(C) Airport Approach Flight Planning Continuation Record
@@ -571,6 +599,15 @@ impl<'a> Arinc424RecordSpec<'a> for AirportApproachFlightPlanningContinuationRec
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -671,5 +708,14 @@ impl<'a> Arinc424RecordSpec<'a> for AirportApproachProcedureDataContinuationReco
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_identifier.raw_bytes,
+            self.approach_identifier.raw_bytes,
+        ])
     }
 }

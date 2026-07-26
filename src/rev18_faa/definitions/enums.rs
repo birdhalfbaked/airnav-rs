@@ -127,6 +127,90 @@ impl ParseableField for Section {
     }
 }
 
+/// 5.5 Any Subsection
+/// Note: This field must have the section in the first byte and the subsection in
+/// the second byte of the slice
+#[derive(Debug)]
+pub enum CombinedSectionSubsection {
+    GridMORA(MORASubsection),
+    Navaid(NavaidSubsection),
+    Enroute(EnrouteSubsection),
+    Heliport(HeliportSubsection),
+    Airport(AirportSubsection),
+    CompanyRoutes(CompanyRoutesSubsection),
+    Tables(TablesSubsection),
+    Airspace(AirspaceSubsection),
+    Unresolved(char),
+}
+
+impl ParseableField for CombinedSectionSubsection {
+    fn from_bytes(bytes: &[u8]) -> Result<Option<Self>, FieldParseError> {
+        let fallback_code = Self::Unresolved(bytes[1] as char);
+        let section = Section::from_bytes(&bytes[0..1])?;
+        let subsection_bytes = &bytes[1..2];
+        Ok(Some(match section {
+            Some(Section::MORA) => {
+                if let Ok(Some(subsection)) = MORASubsection::from_bytes(&subsection_bytes) {
+                    Self::GridMORA(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Navaid) => {
+                if let Ok(Some(subsection)) = NavaidSubsection::from_bytes(&subsection_bytes) {
+                    Self::Navaid(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Enroute) => {
+                if let Ok(Some(subsection)) = EnrouteSubsection::from_bytes(&subsection_bytes) {
+                    Self::Enroute(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Heliport) => {
+                if let Ok(Some(subsection)) = HeliportSubsection::from_bytes(&subsection_bytes) {
+                    Self::Heliport(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Airport) => {
+                if let Ok(Some(subsection)) = AirportSubsection::from_bytes(&subsection_bytes) {
+                    Self::Airport(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::CompanyRoutes) => {
+                if let Ok(Some(subsection)) = CompanyRoutesSubsection::from_bytes(&subsection_bytes)
+                {
+                    Self::CompanyRoutes(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Tables) => {
+                if let Ok(Some(subsection)) = TablesSubsection::from_bytes(&subsection_bytes) {
+                    Self::Tables(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            Some(Section::Airspace) => {
+                if let Ok(Some(subsection)) = AirspaceSubsection::from_bytes(&subsection_bytes) {
+                    Self::Airspace(subsection)
+                } else {
+                    fallback_code
+                }
+            }
+            _ => return Err(FieldParseError::new("Invalid section code".to_string())),
+        }))
+    }
+}
+
 /// 5.5(A) MORA Subsection Code
 #[derive(Debug, PartialEq, Eq)]
 pub enum MORASubsection {
@@ -2517,7 +2601,7 @@ impl ParseableField for NavaidLimitationCode {
 }
 
 /// 5.206 Component Affected Indicator
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum ComponentAffectedIndicator {
     /// A
     TACANAzimuthOnly,

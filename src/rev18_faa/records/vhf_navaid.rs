@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct VHFNavaidRecords;
 impl VHFNavaidRecords {
@@ -126,6 +127,15 @@ impl<'a> Arinc424RecordSpec<'a> for VHFNavaidPrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_icao_identifier.raw_bytes,
+            self.vor_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.2.2 VHFNavaid Continuation Record
@@ -172,6 +182,15 @@ impl<'a> Arinc424RecordSpec<'a> for VHFNavaidContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_icao_identifier.raw_bytes,
+            self.vor_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -223,6 +242,15 @@ impl<'a> Arinc424RecordSpec<'a> for VHFNavaidSimulationContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_icao_identifier.raw_bytes,
+            self.vor_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -276,6 +304,15 @@ impl<'a> Arinc424RecordSpec<'a> for VHFNavaidFlightPlanningContinuationRecord<'a
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_icao_identifier.raw_bytes,
+            self.vor_identifier.raw_bytes,
+        ])
     }
 }
 
@@ -428,5 +465,14 @@ impl<'a> Arinc424RecordSpec<'a> for VHFNavaidLimitationContinuationRecord<'a> {
             ),
         );
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airport_icao_identifier.raw_bytes,
+            self.vor_identifier.raw_bytes,
+        ])
     }
 }

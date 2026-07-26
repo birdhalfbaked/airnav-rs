@@ -1676,6 +1676,12 @@ impl ParseableField for SectorFromTo {
     }
 }
 
+impl Into<[char; 2]> for SectorFromTo {
+    fn into(self) -> [char; 2] {
+        [self.from, self.to]
+    }
+}
+
 /// 5.208 Navaid Distance Limitation
 #[derive(Debug, PartialEq, Eq)]
 pub struct NavaidDistanceLimitation {
@@ -1705,6 +1711,12 @@ impl ParseableField for NavaidDistanceLimitation {
     }
 }
 
+impl Into<[u64; 2]> for NavaidDistanceLimitation {
+    fn into(self) -> [u64; 2] {
+        [self.first_limit.into(), self.second_limit.into()]
+    }
+}
+
 /// 5.209 Navaid Altitude Limitation
 #[derive(Debug, PartialEq, Eq)]
 pub struct NavaidAltitudeLimitation {
@@ -1731,6 +1743,12 @@ impl ParseableField for NavaidAltitudeLimitation {
                 "Invalid first or second limit".to_string(),
             ));
         }
+    }
+}
+
+impl Into<[u64; 2]> for NavaidAltitudeLimitation {
+    fn into(self) -> [u64; 2] {
+        [self.first_limit.into(), self.second_limit.into()]
     }
 }
 

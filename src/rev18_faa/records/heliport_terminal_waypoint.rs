@@ -3,7 +3,7 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError, is_primary_record,
 };
 pub(super) struct HeliportTerminalWaypointRecords;
 impl HeliportTerminalWaypointRecords {
@@ -104,6 +104,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportTerminalWaypointPrimaryRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.2.2.2 Heliport Terminal Waypoint Continuation Record
@@ -151,6 +160,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportTerminalWaypointContinuationRecord<'
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
+    }
 }
 
 /// 4.2.2.3 Heliport Terminal Waypoint Flight Planning Continuation Record
@@ -159,8 +177,8 @@ pub struct HeliportTerminalWaypointFlightPlanningContinuationRecord<'a> {
     pub record_type: RecordField<'a, RecordType>,
     pub customer_area_code: RecordField<'a, CustomerAreaCode>,
     pub section: RecordField<'a, Section>,
-    pub region_code: RecordField<'a, RegionCode>,
-    pub region_icao_code: RecordField<'a, IcaoCode>,
+    pub heliport_identifier: RecordField<'a, AirportHeliportIdentifier>,
+    pub heliport_icao_code: RecordField<'a, IcaoCode>,
     pub subsection: RecordField<'a, NavaidSubsection>,
     pub waypoint_identifier: RecordField<'a, FixIdentifier>,
     pub waypoint_icao_code: RecordField<'a, IcaoCode>,
@@ -185,8 +203,8 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportTerminalWaypointFlightPlanningContin
             record_type:                        RecordField::from_bytes(input, 1, 1)?,
             customer_area_code:                 RecordField::from_bytes(input, 2, 3)?,
             section:                            RecordField::from_bytes(input, 5, 1)?,
-            region_code:                        RecordField::from_bytes(input, 7, 4)?,
-            region_icao_code:                   RecordField::from_bytes(input, 11, 2)?,
+            heliport_identifier:                RecordField::from_bytes(input, 7, 4)?,
+            heliport_icao_code:                 RecordField::from_bytes(input, 11, 2)?,
             subsection:                         RecordField::from_bytes(input, 13, 1)?,
             waypoint_identifier:                RecordField::from_bytes(input, 14, 5)?,
             waypoint_icao_code:                 RecordField::from_bytes(input, 20, 2)?,
@@ -203,6 +221,15 @@ impl<'a> Arinc424RecordSpec<'a> for HeliportTerminalWaypointFlightPlanningContin
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.heliport_identifier.raw_bytes,
+            self.waypoint_identifier.raw_bytes,
+        ])
     }
 }
 

@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct ControlledAirspaceRecords;
 impl ControlledAirspaceRecords {
@@ -123,6 +124,16 @@ impl<'a> Arinc424RecordSpec<'a> for ControlledAirspacePrimaryRecord<'a> {
         }
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airspace_type.raw_bytes,
+            self.airspace_center.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.25.2 Controlled Airspace Controlling Agency And Time Continuation Record
@@ -208,5 +219,15 @@ impl<'a> Arinc424RecordSpec<'a> for ControlledAirspaceControllingAgencyAndTimeCo
             );
         }
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.airspace_type.raw_bytes,
+            self.airspace_center.raw_bytes,
+            self.multiple_code.raw_bytes,
+        ])
     }
 }

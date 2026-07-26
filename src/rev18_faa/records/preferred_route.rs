@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct PreferredRouteRecords;
 impl PreferredRouteRecords {
@@ -162,6 +163,14 @@ impl<'a> Arinc424RecordSpec<'a> for PreferredRoutePrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_id.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.24.2 Preferred Route Time Continuation Record
@@ -223,6 +232,14 @@ impl<'a> Arinc424RecordSpec<'a> for PreferredRouteTimeContinuationRecord<'a> {
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_id.raw_bytes,
+        ])
+    }
 }
 
 /// 4.1.24.3 Preferred Route Continuation Record
@@ -267,5 +284,13 @@ impl<'a> Arinc424RecordSpec<'a> for PreferredRouteContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.route_id.raw_bytes,
+        ])
     }
 }

@@ -3,7 +3,8 @@ use crate::rev18_faa::definitions::*;
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::fields::ParseableField;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError, is_primary_record,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
+    is_primary_record,
 };
 pub(super) struct EnrouteCommsRecords;
 impl EnrouteCommsRecords {
@@ -66,7 +67,7 @@ pub struct EnrouteCommsPrimaryRecord<'a> {
     pub fir_uir_address: RecordField<'a, FirUirAddress>,
     pub fir_uir_indicator: RecordField<'a, FirUirIndicator>,
     pub remote_name: RecordField<'a, RemoteSiteName>,
-    pub communications_types: RecordField<'a, CommunicationsType>,
+    pub communications_type: RecordField<'a, CommunicationsType>,
     pub communications_frequency: RecordField<'a, CommunicationsFrequency>,
     pub guard_transmit_indicator: RecordField<'a, GuardTransmitIndicator>,
     pub frequency_units: RecordField<'a, FrequencyUnits>,
@@ -108,7 +109,7 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsPrimaryRecord<'a> {
             fir_uir_address:              RecordField::from_bytes(input, 11, 4)?,
             fir_uir_indicator:            RecordField::from_bytes(input, 15, 1)?,
             remote_name:                  RecordField::from_bytes(input, 19, 4)?,
-            communications_types:         RecordField::from_bytes(input, 44, 3)?,
+            communications_type :         RecordField::from_bytes(input, 44, 3)?,
             communications_frequency:     comms_frequency,
             guard_transmit_indicator:     RecordField::from_bytes(input, 54, 1)?,
             frequency_units:              RecordField::from_bytes(input, 55, 1)?,
@@ -156,6 +157,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsPrimaryRecord<'a> {
         );
         validation_result.as_result()
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.fir_rdo_identifier.raw_bytes,
+            self.communications_type.raw_bytes,
+        ])
+    }
 }
 
 // 4.1.23.2 Enroute Communications Callsign And Time Continuation Record
@@ -169,7 +179,7 @@ pub struct EnrouteCommsCallsignAndTimeContinuationRecord<'a> {
     pub fir_uir_address: RecordField<'a, FirUirAddress>,
     pub fir_uir_indicator: RecordField<'a, FirUirIndicator>,
     pub remote_name: RecordField<'a, RemoteSiteName>,
-    pub communications_types: RecordField<'a, CommunicationsType>,
+    pub communications_type: RecordField<'a, CommunicationsType>,
     pub communications_frequency: RecordField<'a, CommunicationsFrequency>,
     pub guard_transmit_indicator: RecordField<'a, GuardTransmitIndicator>,
     pub frequency_units: RecordField<'a, FrequencyUnits>,
@@ -201,7 +211,7 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsCallsignAndTimeContinuationRecor
             fir_uir_address:              RecordField::from_bytes(input, 11, 4)?,
             fir_uir_indicator:            RecordField::from_bytes(input, 15, 1)?,
             remote_name:                  RecordField::from_bytes(input, 19, 4)?,
-            communications_types:         RecordField::from_bytes(input, 44, 3)?,
+            communications_type:          RecordField::from_bytes(input, 44, 3)?,
             communications_frequency:     comms_frequency,
             guard_transmit_indicator:     RecordField::from_bytes(input, 54, 1)?,
             frequency_units:              RecordField::from_bytes(input, 55, 1)?,
@@ -220,6 +230,15 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsCallsignAndTimeContinuationRecor
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
     }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.fir_rdo_identifier.raw_bytes,
+            self.communications_type.raw_bytes,
+        ])
+    }
 }
 
 // 4.1.23.3 Enroute Communications Time Continuation Record
@@ -233,7 +252,7 @@ pub struct EnrouteCommsTimeContinuationRecord<'a> {
     pub fir_uir_address: RecordField<'a, FirUirAddress>,
     pub fir_uir_indicator: RecordField<'a, FirUirIndicator>,
     pub remote_name: RecordField<'a, RemoteSiteName>,
-    pub communications_types: RecordField<'a, CommunicationsType>,
+    pub communications_type: RecordField<'a, CommunicationsType>,
     pub communications_frequency: RecordField<'a, CommunicationsFrequency>,
     pub guard_transmit_indicator: RecordField<'a, GuardTransmitIndicator>,
     pub frequency_units: RecordField<'a, FrequencyUnits>,
@@ -266,7 +285,7 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsTimeContinuationRecord<'a> {
             fir_uir_address:              RecordField::from_bytes(input, 11, 4)?,
             fir_uir_indicator:            RecordField::from_bytes(input, 15, 1)?,
             remote_name:                  RecordField::from_bytes(input, 19, 4)?,
-            communications_types:         RecordField::from_bytes(input, 44, 3)?,
+            communications_type:          RecordField::from_bytes(input, 44, 3)?,
             communications_frequency:     comms_frequency,
             guard_transmit_indicator:     RecordField::from_bytes(input, 54, 1)?,
             frequency_units:              RecordField::from_bytes(input, 55, 1)?,
@@ -285,5 +304,14 @@ impl<'a> Arinc424RecordSpec<'a> for EnrouteCommsTimeContinuationRecord<'a> {
 
     fn validate(&self) -> Result<(), RecordValidationError> {
         Ok(())
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.fir_rdo_identifier.raw_bytes,
+            self.communications_type.raw_bytes,
+        ])
     }
 }

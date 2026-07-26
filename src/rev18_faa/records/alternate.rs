@@ -2,7 +2,7 @@ use crate::rev18_faa::definitions::*;
 
 use crate::rev18_faa::records::record::ARINCRecord;
 use crate::types::records::{
-    Arinc424RecordSpec, RecordField, RecordParseError, RecordValidationError,
+    Arinc424RecordSpec, GroupKey, RecordField, RecordParseError, RecordValidationError,
 };
 pub(super) struct AlternateRecords;
 impl AlternateRecords {
@@ -100,5 +100,13 @@ impl<'a> Arinc424RecordSpec<'a> for AlternatePrimaryRecord<'a> {
             );
         }
         validation_result.as_result()
+    }
+
+    fn group_key(&self) -> GroupKey {
+        GroupKey::from_byte_slices(&[
+            self.section.raw_bytes,
+            self.subsection.raw_bytes,
+            self.relation_airport_or_fix.raw_bytes,
+        ])
     }
 }
